@@ -3,15 +3,14 @@
 #include <math.h>
 #include "Timer.h"
 
-void seq_merge_path(int *A, int *B, int *M, int size){
-    int card_M = 2*size; 
+void seq_merge_path(int *A, int *B, int *M, int sizeA, int sizeB, int sizeM){
     int i=0, j=0; 
-    while(i+j < card_M){
-        if(i>=size){
+    while(i+j < sizeM){
+        if(i>=sizeA){
             M[i+j] = B[j];
             j+=1;
         }
-        else if(j>= size || A[i]<B[j]){
+        else if(j>= sizeB || A[i]<B[j]){
             M[i+j] = A[i];
             i+=1;
         }
@@ -25,16 +24,20 @@ void seq_merge_path(int *A, int *B, int *M, int size){
 
 int main(){
 
-    //Memory allocation
-    int *A, *B, *M, L;
-    L = 500000; 
-    A = (int*)malloc(L*sizeof(int));
-    B = (int*)malloc(L*sizeof(int));
-    M = (int*)malloc(2*L*sizeof(int));
+    // Memory allocation on CPU
+    int *A, *B, *M, LA, LB, LM;
+    LA = 250000;
+    LB = 500000;
+    LM = LA+LB;
+    A = (int*)malloc(LA*sizeof(int));
+    B = (int*)malloc(LB*sizeof(int));
+    M = (int*)malloc(LM*sizeof(int));
 
-    //Initialize input vectors 
-    for(int i = 0; i < L; i++){
+    // Initialize input vectors
+    for(int i = 0; i < LA; i++){
         A[i] = 2*i;
+    }
+    for(int i = 0; i < LB; i++){
         B[i] = 2*i+1;
     }
 
@@ -42,49 +45,47 @@ int main(){
     Timer TimerAddOne;							
     TimerAddOne.start();	
 
-    //Run sequential algorithm 
-    seq_merge_path(A,B,M,L); 
+    // Run sequential algorithm 
+    seq_merge_path(A,B,M,LA,LB,LM); 
 
-    //Print execution time 
+     // Print execution report
     TimerAddOne.add();							
-	printf("CPU Timer for the merge path sequential algorithm on the CPU : %f s\n", 
-           (float)TimerAddOne.getsum());	
-
-    //Print values to check results 
-    printf("BEGINNING OF ARRAYS :\n");
-    printf("Array A : ");
+	printf("EXECUTION TIME :\n Timer for the CPU Merge Path algorithm : %f ms (i.e. %f s)\n", 
+           (float)TimerAddOne.getsum()*1000, (float)TimerAddOne.getsum());	
+    printf("PARAMETERS :\n");
+    printf(" Size of A : %d\n",LA);
+    printf(" Size of B : %d\n",LB);
+    printf("MERGING RESULTS :\n");
+    printf(" Input A: [");
     for(int i = 0; i < 10; i++){
         printf("%d, ", A[i]);
-    } 
-    printf("...\n");
-    printf("Array B : ");
+    }
+    printf("..., "); 
+    for(int i = LA-10; i < LA-1; i++){
+        printf("%d, ", A[i]);
+    }
+    printf("%d]\n", A[LA-1]);
+    printf(" Input B: [");
     for(int i = 0; i < 10; i++){
         printf("%d, ", B[i]);
-    } 
-    printf("...\n");
-    printf("Array M : ");
-    for(int i = 0; i < 20; i++){
+    }
+    printf("..., "); 
+    for(int i = LB-10; i < LB-1; i++){
+        printf("%d, ", B[i]);
+    }
+    printf("%d]\n", B[LB-1]);
+    printf(" Output M: [");
+    for(int i = 0; i < 10; i++){
         printf("%d, ", M[i]);
-    } 
-    printf("...\n");
-    printf("END OF ARRAYS :\n");
-    printf("Array A : ...");
-    for(int i = L-10; i < L; i++){
-        printf(", %d", A[i]);
-    } 
-    printf("\n");
-    printf("Array B : ...");
-    for(int i = L-10; i < L; i++){
-        printf(", %d", B[i]);
-    } 
-    printf("\n");
-    printf("Array M : ...");
-    for(int i = 2*L-20; i < 2*L; i++){
-        printf(", %d", M[i]);
-    } 
+    }
+    printf("..., "); 
+    for(int i = LM-10; i < LM-1; i++){
+        printf("%d, ", M[i]);
+    }
+    printf("%d]\n", M[LM-1]);
     printf("\n");
     
-    //Free memory
+    // Free memory
     free(A);
     free(B);
     free(M); 
