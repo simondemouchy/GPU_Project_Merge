@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "Timer.h"
 
 void seq_merge_path(int *A, int *B, int *M, int size){
@@ -22,38 +24,65 @@ void seq_merge_path(int *A, int *B, int *M, int size){
 
 
 int main(){
-    Timer TimerAddOne;							// CPU timer instructions    
 
     //Memory allocation
     int *A, *B, *M, L;
-    L = 5; 
+    L = 500000; 
     A = (int*)malloc(L*sizeof(int));
     B = (int*)malloc(L*sizeof(int));
-    M = (int*)malloc(L*sizeof(int));
+    M = (int*)malloc(2*L*sizeof(int));
 
-    TimerAddOne.start();							// CPU timer instructions
-
+    //Initialize input vectors 
     for(int i = 0; i < L; i++){
         A[i] = 2*i;
         B[i] = 2*i+1;
     }
 
+    // CPU timer instructions
+    Timer TimerAddOne;							
+    TimerAddOne.start();	
+
     //Run sequential algorithm 
     seq_merge_path(A,B,M,L); 
 
-    TimerAddOne.add();							// CPU timer instructions
-	printf("CPU Timer for the addition on the CPU of scalars : %f s\n", 
-           (float)TimerAddOne.getsum());			// CPU timer instructions
+    //Print execution time 
+    TimerAddOne.add();							
+	printf("CPU Timer for the merge path sequential algorithm on the CPU : %f s\n", 
+           (float)TimerAddOne.getsum());	
 
-
-    for(int i = 0; i < L; i++){
-        printf("Result A : %d \n", A[i]);
-        printf("Result B : %d \n", B[i]);
-    }      
-    for(int i = 0; i < 2*L; i++){
-        printf("Result : %d \n", M[i]);
-
-    }
+    //Print values to check results 
+    printf("BEGINNING OF ARRAYS :\n");
+    printf("Array A : ");
+    for(int i = 0; i < 10; i++){
+        printf("%d, ", A[i]);
+    } 
+    printf("...\n");
+    printf("Array B : ");
+    for(int i = 0; i < 10; i++){
+        printf("%d, ", B[i]);
+    } 
+    printf("...\n");
+    printf("Array M : ");
+    for(int i = 0; i < 20; i++){
+        printf("%d, ", M[i]);
+    } 
+    printf("...\n");
+    printf("END OF ARRAYS :\n");
+    printf("Array A : ...");
+    for(int i = L-10; i < L; i++){
+        printf(", %d", A[i]);
+    } 
+    printf("\n");
+    printf("Array B : ...");
+    for(int i = L-10; i < L; i++){
+        printf(", %d", B[i]);
+    } 
+    printf("\n");
+    printf("Array M : ...");
+    for(int i = 2*L-20; i < 2*L; i++){
+        printf(", %d", M[i]);
+    } 
+    printf("\n");
     
     //Free memory
     free(A);
