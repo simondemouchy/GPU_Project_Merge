@@ -13,7 +13,6 @@
 // Kernel definition
 __global__ void par_merge_path_k(int *aGPU, int *bGPU, int *mGPU, int sizeA, int sizeB, int loop_idx){
     int i = threadIdx.x + 1024*loop_idx;
-    printf("ee %d:\n",aGPU[i]);
     if(i<sizeA+sizeB){
         int Kx; 
         int Ky;
