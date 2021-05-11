@@ -74,19 +74,27 @@ void par_merge_path(int **a, int **b, int **m){
 
     // Memory allocation on GPU (int **)malloc(N * sizeof(int*))
     int **AGPU, **BGPU, **MGPU;
-    cudaMalloc((void**)&AGPU, N*sizeof(int));
-    cudaMalloc((void**)&BGPU, N*sizeof(int));
-    cudaMalloc((void**)&MGPU, N*sizeof(int));
+    // int **mat_A = (int **)malloc(N * sizeof(int*));
+    // for(int i = 0; i < N; i++) mat_A[i] = (int *)malloc(LA * sizeof(int));
+    cudaMalloc((void**)&AGPU, N*LA*sizeof(int));
+    cudaMalloc((void**)&BGPU, N*LB*sizeof(int));
+    cudaMalloc((void**)&MGPU, N*LM*sizeof(int));
+    
+    // for(int i = 0; i < N; i++){
+    //     cudaMalloc((void**)&AGPU[i], LA*sizeof(int));
+    // }
+    // for(int i = 0; i < N; i++){
+    //     cudaMalloc((void**)&BGPU[i], LB*sizeof(int));
+    // }
+    // for(int i = 0; i < N; i++){
+    //     cudaMalloc((void**)&MGPU[i], LM*sizeof(int));
+    // }
 
     // Transfert from Host (CPU) To Device (GPU)
     cudaMemcpy(AGPU, a, N*LA*sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(BGPU, b, N*LB*sizeof(int), cudaMemcpyHostToDevice);
 
-    // for (int i = 0; i < N; i++){
-    //     cudaMalloc((void*)&AGPU[i], LA * sizeof(int));
-    //     cudaMalloc((void*)&BGPU[i], LB * sizeof(int));
-    //     cudaMalloc((void*)&MGPU[i], LM * sizeof(int));
-    // }
+   
 
     // cudaMemcpy(MGPU, m, N*LM*sizeof(int), cudaMemcpyHostToDevice);
 
