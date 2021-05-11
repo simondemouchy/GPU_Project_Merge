@@ -4,15 +4,16 @@
 #include "Timer.h"
 
 // Define vectors size (>20)
-#define LA (250000)
-#define LB (500000)
+#define LA (1000000)
+#define LB (1000000)
 #define LM (LA+LB)
-#define numbBlocks int(LM/1024)+ 1
+#define numbBlocks (1)
 #define threadsPerBlock (1024)
 
 // Kernel definition
-__global__ void par_merge_path_k(int *aGPU, int *bGPU, int *mGPU, int sizeA, int sizeB){
-    int i = threadIdx.x + blockIdx.x*blockDim.x;
+__global__ void par_merge_path_k(int *aGPU, int *bGPU, int *mGPU, int sizeA, int sizeB, int loop_idx){
+    int i = threadIdx.x + 1024*loop_idx;
+    printf("ee %d:\n",aGPU[i]);
     if(i<sizeA+sizeB){
         int Kx; 
         int Ky;
@@ -74,7 +75,9 @@ void par_merge_path(int *a, int *b, int *m){
     cudaMemcpy(BGPU, b, LB*sizeof(int), cudaMemcpyHostToDevice);
 
 	// kernel invocation with L threads
-    par_merge_path_k<<<numbBlocks, threadsPerBlock>>>(AGPU, BGPU, MGPU, LA, LB);
+    for(int loop_idx = 0; loop_idx  < int(LM/1024)+ 1; loop_idx ++){
+        par_merge_path_k<<<numbBlocks, threadsPerBlock>>>(AGPU, BGPU, MGPU, LA, LB, loop_idx);
+    }
     cudaDeviceSynchronize();
 
     // Transfert from Device To Host
@@ -126,6 +129,7 @@ int main(){
     printf(" Size of B : %d\n",LB);
     printf(" Number of blocks : %d\n",numbBlocks );
     printf(" Number of threads by block : %d\n",threadsPerBlock);
+    printf(" Number of times a thread is crossed : %d\n", int(LM/1024)+1);
     printf("MERGING RESULTS :\n");
     printf(" Input A: [");
     for(int i = 0; i < 10; i++){
