@@ -3,6 +3,8 @@
 #include <math.h>
 #include "Timer.h"
 
+//firstly, we write the sequential merge path, called as "Algorithm 1" in the project desciption
+
 void seq_merge_path(int *A, int *B, int *M, int sizeA, int sizeB, int sizeM){
     int i=0, j=0; 
     while(i+j < sizeM){
@@ -25,6 +27,7 @@ void seq_merge_path(int *A, int *B, int *M, int sizeA, int sizeB, int sizeM){
 int main(){
 
     // Memory allocation on CPU
+    // We define 2 ordered arrays of different size
     int *A, *B, *M, LA, LB, LM;
     LA = 250000;
     LB = 500000;
