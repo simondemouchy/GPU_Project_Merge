@@ -3,11 +3,14 @@
 #include <math.h>
 #include "Timer.h"
 
-#define LA (250000)
+//Definition of a batch of size N of various ordered arrays.
+#define LA (500000)
 #define LB (500000)
 #define LM  (LA+LB)
 #define N (100)
 
+//firstly, we write the sequential merge path, called as "Algorithm 1" in the project desciption
+// We add a for loop because we have a batch of arrays.
 void seq_merge_path(int** A, int** B, int** M, int sizeA, int sizeB, int sizeM){
     for(int idx_row = 0; idx_row < N; idx_row++){
         int i=0, j=0; 
@@ -28,6 +31,8 @@ void seq_merge_path(int** A, int** B, int** M, int sizeA, int sizeB, int sizeM){
     }
 }
 
+//A, B and M are now matrices and every row is associated with an ordered array. The numbers of columns
+//matches the size of the arrays.
 int main(){
 
     // Memory allocation on CPU
