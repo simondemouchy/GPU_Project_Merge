@@ -4,12 +4,15 @@
 #include "Timer.h"
 
 // Define vectors size (>20)
-#define LA (1000000)
-#define LB (1000000)
+#define LA (500000)
+#define LB (500000)
 #define LM (LA+LB)
 #define numbBlocks (1)
 #define threadsPerBlock (1024)
 
+//Firstly, we write the Merge path, called as "Algorithm 2" in the project desciption
+//To handle array of size d > 1024, we use a "loop_idx" which allows the algorithm to use only one 
+//block per array and to cross a thread several times.
 // Kernel definition
 __global__ void par_merge_path_k(int *aGPU, int *bGPU, int *mGPU, int sizeA, int sizeB, int loop_idx){
     int i = threadIdx.x + 1024*loop_idx;

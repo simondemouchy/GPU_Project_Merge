@@ -9,7 +9,7 @@
 #define LM  (LA+LB)
 #define N (100)
 
-//firstly, we write the sequential merge path, called as "Algorithm 1" in the project desciption
+//Firstly, we write the sequential merge path, called as "Algorithm 1" in the project desciption
 // We add a for loop because we have a batch of arrays.
 void seq_merge_path(int** A, int** B, int** M, int sizeA, int sizeB, int sizeM){
     for(int idx_row = 0; idx_row < N; idx_row++){
