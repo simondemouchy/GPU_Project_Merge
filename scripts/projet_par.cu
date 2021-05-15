@@ -4,7 +4,7 @@
 #include "Timer.h"
 
 // Define vectors size (>20)
-#define LA (500000)
+#define LA (250000)
 #define LB (500000)
 #define LM (LA+LB)
 #define numbBlocks (1)
