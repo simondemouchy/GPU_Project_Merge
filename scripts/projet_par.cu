@@ -14,52 +14,54 @@
 //To handle array of size d > 1024, we use a "loop_idx" which allows the algorithm to use only one 
 //block per array and to cross a thread several times.
 // Kernel definition
-__global__ void par_merge_path_k(int *aGPU, int *bGPU, int *mGPU, int sizeA, int sizeB, int loop_idx){
-    int i = threadIdx.x + 1024*loop_idx;
-    if(i<sizeA+sizeB){
-        int Kx; 
-        int Ky;
-        //int Px;   
-        int Py; 
-        int offset; 
-        int Qx; 
-        int Qy; 
-        if(i>sizeA){
-            Kx = i -sizeA;
-            Ky = sizeA;
-            //Px = sizeA;
-            Py = i -sizeA; 
-        }
-        else{
-            Kx = 0;
-            Ky = i;
-            //Px = i;
-            Py = 0; 
-        }
-        while(true){
-            offset = abs(Ky-Py)/2;
-            Qx = Kx + offset; 
-            Qy = Ky - offset; 
-            if((Qy>=0) && (Qx <= sizeB) && (Qy ==sizeA || Qx==0 || aGPU[Qy]>bGPU[Qx-1]) ){
-                if((Qx==sizeB) || (Qy==0) ||(aGPU[Qy-1]<=bGPU[Qx])){
-                    if((Qy<sizeA) && (Qx==sizeB || aGPU[Qy]<= bGPU[Qx])){
-                        mGPU[i] = aGPU[Qy]; 
-                    }
-                    else{
-                        mGPU[i] = bGPU[Qx]; 
-                    }
-                    break; 
-                }
-                else{
-                    Kx = Qx + 1;
-                    Ky = Qy - 1;  
-                }
+__global__ void par_merge_path_k(int *aGPU, int *bGPU, int *mGPU, int sizeA, int sizeB){
+    for(int loop_idx = 0; loop_idx  < int(LM/1024)+ 1; loop_idx ++){
+        int i = threadIdx.x + 1024*loop_idx;
+        if(i<sizeA+sizeB){
+            int Kx; 
+            int Ky;
+            //int Px;   
+            int Py; 
+            int offset; 
+            int Qx; 
+            int Qy; 
+            if(i>sizeA){
+                Kx = i -sizeA;
+                Ky = sizeA;
+                //Px = sizeA;
+                Py = i -sizeA; 
             }
             else{
-                //Px = Qx -1 ; 
-                Py = Qy +1; 
-            } 
-        }   
+                Kx = 0;
+                Ky = i;
+                //Px = i;
+                Py = 0; 
+            }
+            while(true){
+                offset = abs(Ky-Py)/2;
+                Qx = Kx + offset; 
+                Qy = Ky - offset; 
+                if((Qy>=0) && (Qx <= sizeB) && (Qy ==sizeA || Qx==0 || aGPU[Qy]>bGPU[Qx-1]) ){
+                    if((Qx==sizeB) || (Qy==0) ||(aGPU[Qy-1]<=bGPU[Qx])){
+                        if((Qy<sizeA) && (Qx==sizeB || aGPU[Qy]<= bGPU[Qx])){
+                            mGPU[i] = aGPU[Qy]; 
+                        }
+                        else{
+                            mGPU[i] = bGPU[Qx]; 
+                        }
+                        break; 
+                    }
+                    else{
+                        Kx = Qx + 1;
+                        Ky = Qy - 1;  
+                    }
+                }
+                else{
+                    //Px = Qx -1 ; 
+                    Py = Qy +1; 
+                } 
+            }   
+        }
     }
 }
 
@@ -77,9 +79,8 @@ void par_merge_path(int *a, int *b, int *m){
     cudaMemcpy(BGPU, b, LB*sizeof(int), cudaMemcpyHostToDevice);
 
 	// kernel invocation with L threads
-    for(int loop_idx = 0; loop_idx  < int(LM/1024)+ 1; loop_idx ++){
-        par_merge_path_k<<<numbBlocks, threadsPerBlock>>>(AGPU, BGPU, MGPU, LA, LB, loop_idx);
-    }
+    par_merge_path_k<<<numbBlocks, threadsPerBlock>>>(AGPU, BGPU, MGPU, LA, LB);
+    
     cudaDeviceSynchronize();
 
     // Transfert from Device To Host

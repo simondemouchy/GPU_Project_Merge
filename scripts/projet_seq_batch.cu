@@ -4,8 +4,8 @@
 #include "Timer.h"
 
 //Definition of a batch of size N of various ordered arrays.
-#define LA (500000)
-#define LB (500000)
+#define LA (2500)
+#define LB (5000)
 #define LM  (LA+LB)
 #define N (100)
 
@@ -48,13 +48,13 @@ int main(){
     // Initialize input matrices
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < LA; j++) {
-            mat_A[i][j] = 2*j;
+            mat_A[i][j] = 2*j+i*10;
         }
     }   
 
     for(int i = 0; i < N; i++) {
         for(int j = 0; j < LB; j++) {
-            mat_B[i][j] = 2*j+1;
+            mat_B[i][j] = 2*j+i*10+1;
         }
     }   
     
