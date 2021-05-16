@@ -28,8 +28,8 @@ int main(){
     // Memory allocation on CPU
     // We define 2 ordered arrays of different size
     int *A, *B, *M, LA, LB, LM;
-    LA = 500000;
-    LB = 250000;
+    LA = 250000;
+    LB = 500000;
     LM = LA+LB;
     A = (int*)malloc(LA*sizeof(int));
     B = (int*)malloc(LB*sizeof(int));
