@@ -10,6 +10,10 @@
 #define LM (LA + LB)
 #define threadsPerBlock (1024)
 
+//Firstly, we write the Merge path, called as "Algorithm 2" in the project desciption
+//To handle array of size d > 1024, we use a "loop_idx" which allows the algorithm to use only one 
+//block per array and to cross a thread several times.
+//And we use one block by sorting. Therefore all the sorting are computing in parallel.
 // Kernel definition
 __global__ void par_merge_path_k(int A[][LA], int B[][LB], int C[][LM]){
     for(int loop_idx = 0; loop_idx  < int(LM/1024)+ 1; loop_idx ++){
